@@ -116,7 +116,7 @@ class Message extends StatelessWidget {
           children: [
             if (name != null)
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.fromLTRB(12, 12, 8, 2),
                 child: Text(
                   name,
                   style: TextStyle(color: Colors.red[200]),

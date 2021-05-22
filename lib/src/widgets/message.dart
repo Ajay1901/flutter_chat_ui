@@ -74,9 +74,12 @@ class Message extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (name != null)
-              Text(
-                name,
-                style: TextStyle(color: Colors.red[200]),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  name,
+                  style: TextStyle(color: Colors.red[200]),
+                ),
               )
             else
               Container(),
@@ -91,9 +94,12 @@ class Message extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (name != null)
-              Text(
-                name,
-                style: TextStyle(color: Colors.red[200]),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  name,
+                  style: TextStyle(color: Colors.red[200]),
+                ),
               )
             else
               Container(),
@@ -109,9 +115,12 @@ class Message extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (name != null)
-              Text(
-                name,
-                style: TextStyle(color: Colors.red[200]),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  name,
+                  style: TextStyle(color: Colors.red[200]),
+                ),
               )
             else
               Container(),

@@ -31,7 +31,10 @@ class Chat extends StatefulWidget {
     required this.onSendPressed,
     this.theme = const DefaultChatTheme(),
     required this.user,
+    this.usersUidMap,
   }) : super(key: key);
+
+  final Map<String, String>? usersUidMap;
 
   /// See [Message.dateLocale]
   final String? dateLocale;
@@ -309,6 +312,7 @@ class _ChatState extends State<Chat> {
                                           ),
                                         Message(
                                           key: ValueKey(message),
+                                          usersUidMap: widget.usersUidMap,
                                           dateLocale: widget.dateLocale,
                                           message: message,
                                           messageWidth: _messageWidth,

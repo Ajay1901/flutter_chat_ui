@@ -22,7 +22,12 @@ class Message extends StatelessWidget {
     this.onPreviewDataFetched,
     required this.previousMessageSameAuthor,
     required this.shouldRenderTime,
+    this.usersUidMap,
+    this.isGroupChat = false,
   }) : super(key: key);
+
+  final Map<String, String>? usersUidMap;
+  final bool isGroupChat;
 
   /// Locale will be passed to the `Intl` package. Make sure you initialized
   /// date formatting in your app before passing any locale here, otherwise
@@ -55,23 +60,66 @@ class Message extends StatelessWidget {
   final bool shouldRenderTime;
 
   Widget _buildMessage() {
+    String? name;
+
+    if (usersUidMap != null) {
+      final key = message.authorId;
+      name = usersUidMap![key] ?? 'You';
+    }
+
     switch (message.type) {
       case types.MessageType.file:
         final fileMessage = message as types.FileMessage;
-        return FileMessage(
-          message: fileMessage,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (name != null)
+              Text(
+                name,
+                style: TextStyle(color: Colors.red[200]),
+              )
+            else
+              Container(),
+            FileMessage(
+              message: fileMessage,
+            ),
+          ],
         );
       case types.MessageType.image:
         final imageMessage = message as types.ImageMessage;
-        return ImageMessage(
-          message: imageMessage,
-          messageWidth: messageWidth,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (name != null)
+              Text(
+                name,
+                style: TextStyle(color: Colors.red[200]),
+              )
+            else
+              Container(),
+            ImageMessage(
+              message: imageMessage,
+              messageWidth: messageWidth,
+            ),
+          ],
         );
       case types.MessageType.text:
         final textMessage = message as types.TextMessage;
-        return TextMessage(
-          message: textMessage,
-          onPreviewDataFetched: onPreviewDataFetched,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (name != null)
+              Text(
+                name,
+                style: TextStyle(color: Colors.red[200]),
+              )
+            else
+              Container(),
+            TextMessage(
+              message: textMessage,
+              onPreviewDataFetched: onPreviewDataFetched,
+            ),
+          ],
         );
       default:
         return Container();

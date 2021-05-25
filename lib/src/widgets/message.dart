@@ -123,7 +123,7 @@ class Message extends StatelessWidget {
                 ),
               )
             else
-              Container(),
+              const SizedBox(),
             TextMessage(
               message: textMessage,
               onPreviewDataFetched: onPreviewDataFetched,

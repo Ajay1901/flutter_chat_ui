@@ -190,7 +190,7 @@ class Message extends StatelessWidget {
             DateFormat.jm(dateLocale).format(
               DateTime.fromMillisecondsSinceEpoch(
                 message.timestamp! * 1000,
-              ).add(Duration(milliseconds: deviceTimeOffset)),
+              ).subtract(Duration(milliseconds: deviceTimeOffset)),
             ),
             style: InheritedChatTheme.of(context).theme.caption.copyWith(
                   color: InheritedChatTheme.of(context).theme.captionColor,

@@ -24,10 +24,12 @@ class Message extends StatelessWidget {
     required this.shouldRenderTime,
     this.usersUidMap,
     this.isGroupChat = false,
+    this.deviceTimeOffset = 0,
   }) : super(key: key);
 
   final Map<String, String>? usersUidMap;
   final bool isGroupChat;
+  final int deviceTimeOffset;
 
   /// Locale will be passed to the `Intl` package. Make sure you initialized
   /// date formatting in your app before passing any locale here, otherwise
@@ -188,7 +190,7 @@ class Message extends StatelessWidget {
             DateFormat.jm(dateLocale).format(
               DateTime.fromMillisecondsSinceEpoch(
                 message.timestamp! * 1000,
-              ),
+              ).add(Duration(milliseconds: deviceTimeOffset)),
             ),
             style: InheritedChatTheme.of(context).theme.caption.copyWith(
                   color: InheritedChatTheme.of(context).theme.captionColor,

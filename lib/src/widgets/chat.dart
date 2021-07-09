@@ -32,9 +32,11 @@ class Chat extends StatefulWidget {
     this.theme = const DefaultChatTheme(),
     required this.user,
     this.usersUidMap,
+    this.deviceTimeOffset = 0,
   }) : super(key: key);
 
   final Map<String, String>? usersUidMap;
+  final int deviceTimeOffset;
 
   /// See [Message.dateLocale]
   final String? dateLocale;

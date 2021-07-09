@@ -313,6 +313,8 @@ class _ChatState extends State<Chat> {
                                             ),
                                           ),
                                         Message(
+                                          deviceTimeOffset:
+                                              widget.deviceTimeOffset,
                                           key: ValueKey(message),
                                           usersUidMap: widget.usersUidMap,
                                           dateLocale: widget.dateLocale,

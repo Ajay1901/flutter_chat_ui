@@ -102,7 +102,7 @@ class Message extends StatelessWidget {
                 ),
               )
             else
-              Container(),
+              const SizedBox(height: 0, width: 0),
             ImageMessage(
               message: imageMessage,
               messageWidth: messageWidth,

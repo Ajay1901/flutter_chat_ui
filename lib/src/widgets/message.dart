@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:intl/intl.dart';
+
 import 'file_message.dart';
 import 'image_message.dart';
 import 'inherited_chat_theme.dart';
@@ -179,6 +180,7 @@ class Message extends StatelessWidget {
   }
 
   Widget _buildTime(bool currentUserIsAuthor, BuildContext context) {
+    print('dateLocale: $dateLocale');
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

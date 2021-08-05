@@ -192,7 +192,7 @@ class Message extends StatelessWidget {
                 ? DateFormat.jm(dateLocale).format(
                     DateTime.fromMillisecondsSinceEpoch(
                       message.timestamp! * 1000,
-                    ).add(Duration(milliseconds: deviceTimeOffset)),
+                    ),
                   )
                 : DateFormat.jm(dateLocale).format(
                     DateTime.fromMillisecondsSinceEpoch(

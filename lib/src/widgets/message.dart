@@ -180,7 +180,6 @@ class Message extends StatelessWidget {
   }
 
   Widget _buildTime(bool currentUserIsAuthor, BuildContext context) {
-    print('dateLocale: $dateLocale');
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -189,11 +188,17 @@ class Message extends StatelessWidget {
             right: currentUserIsAuthor ? 8 : 16,
           ),
           child: Text(
-            DateFormat.jm(dateLocale).format(
-              DateTime.fromMillisecondsSinceEpoch(
-                message.timestamp! * 1000,
-              ).subtract(Duration(milliseconds: deviceTimeOffset)),
-            ),
+            deviceTimeOffset.isNegative
+                ? DateFormat.jm(dateLocale).format(
+                    DateTime.fromMillisecondsSinceEpoch(
+                      message.timestamp! * 1000,
+                    ).add(Duration(milliseconds: deviceTimeOffset)),
+                  )
+                : DateFormat.jm(dateLocale).format(
+                    DateTime.fromMillisecondsSinceEpoch(
+                      message.timestamp! * 1000,
+                    ).subtract(Duration(milliseconds: deviceTimeOffset)),
+                  ),
             style: InheritedChatTheme.of(context).theme.caption.copyWith(
                   color: InheritedChatTheme.of(context).theme.captionColor,
                 ),

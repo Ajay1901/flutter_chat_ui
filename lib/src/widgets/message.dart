@@ -73,7 +73,7 @@ class Message extends StatelessWidget {
 
       if (allUserIdsInRoom != null) {
         if (!allUserIdsInRoom.contains(authorId)) {
-          color = Colors.blue;
+          color = Colors.blueGrey;
         }
       }
     }

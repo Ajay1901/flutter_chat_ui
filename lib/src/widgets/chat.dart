@@ -35,9 +35,11 @@ class Chat extends StatefulWidget {
     required this.user,
     this.usersUidMap,
     this.deviceTimeOffset = 0,
+    this.room,
   }) : super(key: key);
 
   final Map<String, String>? usersUidMap;
+  final types.Room? room;
   final int deviceTimeOffset;
 
   /// See [Message.dateLocale]
@@ -318,6 +320,7 @@ class _ChatState extends State<Chat> {
                                           deviceTimeOffset:
                                               widget.deviceTimeOffset,
                                           key: ValueKey(message),
+                                          room: widget.room,
                                           usersUidMap: widget.usersUidMap,
                                           dateLocale: widget.dateLocale,
                                           message: message,

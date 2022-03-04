@@ -24,12 +24,12 @@ class Message extends StatelessWidget {
     required this.previousMessageSameAuthor,
     required this.shouldRenderTime,
     this.usersUidMap,
-    this.isGroupChat = false,
     this.deviceTimeOffset = 0,
+    this.room,
   }) : super(key: key);
 
   final Map<String, String>? usersUidMap;
-  final bool isGroupChat;
+  final types.Room? room;
   final int deviceTimeOffset;
 
   /// Locale will be passed to the `Intl` package. Make sure you initialized
@@ -63,7 +63,20 @@ class Message extends StatelessWidget {
   final bool shouldRenderTime;
 
   Widget _buildMessage() {
+    final isGroupChat = usersUidMap != null;
     String? name;
+    var color = Colors.red[200];
+
+    if (isGroupChat && room != null) {
+      final authorId = message.authorId;
+      final allUserIdsInRoom = room?.users.map((user) => user.id).toList();
+
+      if (allUserIdsInRoom != null) {
+        if (!allUserIdsInRoom.contains(authorId)) {
+          color = Colors.blue;
+        }
+      }
+    }
 
     if (usersUidMap != null) {
       final key = message.authorId;
@@ -81,7 +94,7 @@ class Message extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   name,
-                  style: TextStyle(color: Colors.red[200]),
+                  style: TextStyle(color: color),
                 ),
               )
             else

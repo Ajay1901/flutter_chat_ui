@@ -64,7 +64,6 @@ class Message extends StatelessWidget {
 
   Widget _buildMessage() {
     const Color deletedUserColor = Color(0xFF8F99A1);
-    const FontWeight deletedUserFontWeight = FontWeight.w600;
     final isGroupChat = usersUidMap != null;
     String? name;
     var color = Colors.red[200];
@@ -77,7 +76,7 @@ class Message extends StatelessWidget {
       if (allUserIdsInRoom != null) {
         if (!allUserIdsInRoom.contains(authorId)) {
           color = deletedUserColor;
-          fontWeight = deletedUserFontWeight;
+          fontWeight = FontWeight.w600;
         }
       }
     }

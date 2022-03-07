@@ -64,9 +64,11 @@ class Message extends StatelessWidget {
 
   Widget _buildMessage() {
     const Color deletedUserColor = Color(0xFF8F99A1);
+    const FontWeight deletedUserFontWeight = FontWeight.w600;
     final isGroupChat = usersUidMap != null;
     String? name;
     var color = Colors.red[200];
+    var fontWeight = FontWeight.w500;
 
     if (isGroupChat && room != null) {
       final authorId = message.authorId;
@@ -75,6 +77,7 @@ class Message extends StatelessWidget {
       if (allUserIdsInRoom != null) {
         if (!allUserIdsInRoom.contains(authorId)) {
           color = deletedUserColor;
+          fontWeight = deletedUserFontWeight;
         }
       }
     }
@@ -95,7 +98,7 @@ class Message extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   name,
-                  style: TextStyle(color: color),
+                  style: TextStyle(color: color, fontWeight: fontWeight),
                 ),
               )
             else
@@ -115,7 +118,7 @@ class Message extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   name,
-                  style: TextStyle(color: color),
+                  style: TextStyle(color: color,fontWeight: fontWeight),
                 ),
               )
             else
@@ -136,7 +139,7 @@ class Message extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(12, 12, 8, 2),
                 child: Text(
                   name,
-                  style: TextStyle(color: color),
+                  style: TextStyle(color: color, fontWeight: fontWeight),
                 ),
               )
             else

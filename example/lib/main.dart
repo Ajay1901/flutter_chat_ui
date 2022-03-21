@@ -146,6 +146,7 @@ class _ChatPageState extends State<ChatPage> {
     if (message is types.FileMessage) {
       await OpenFile.open(message.uri);
     }
+    print("I am Tapped");
   }
 
   void _handlePreviewDataFetched(
@@ -193,6 +194,9 @@ class _ChatPageState extends State<ChatPage> {
         onPreviewDataFetched: _handlePreviewDataFetched,
         onSendPressed: _handleSendPressed,
         user: _user,
+        onMessageLongPress: (message) {
+          print("I am long pressed");
+        },
       ),
     );
   }

@@ -198,6 +198,7 @@ class _ChatPageState extends State<ChatPage> {
         user: _user,
         selectedMessages: (_messages){
           
+          print("Selected Messages ${_messages.length}");
         }
       ),
     );

@@ -382,8 +382,7 @@ class _ChatState extends State<Chat> {
                                                   galleryItems,
                                                 );
                                               }
-
-                                              widget.onMessageTap
+                                               widget.onMessageTap
                                                   ?.call(tappedMessage);
                                             }
                                           },

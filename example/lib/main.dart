@@ -184,6 +184,8 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+  bool isMultiSelecteon = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,9 +196,9 @@ class _ChatPageState extends State<ChatPage> {
         onPreviewDataFetched: _handlePreviewDataFetched,
         onSendPressed: _handleSendPressed,
         user: _user,
-        onMessageLongPress: (message) {
-          print("I am long pressed");
-        },
+        selectedMessages: (_messages){
+          
+        }
       ),
     );
   }

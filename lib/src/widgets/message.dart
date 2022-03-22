@@ -13,7 +13,7 @@ import 'text_message.dart';
 /// a nice look on larger screens.
 class Message extends StatelessWidget {
   /// Creates a particular message from any message type
-  const Message({
+   Message({
     Key? key,
     this.dateLocale,
     required this.message,
@@ -26,6 +26,7 @@ class Message extends StatelessWidget {
     this.usersUidMap,
     this.deviceTimeOffset = 0,
     this.room,
+    this.isSelected = false,
   }) : super(key: key);
 
   final Map<String, String>? usersUidMap;
@@ -61,6 +62,8 @@ class Message extends StatelessWidget {
   /// received messages and when sent messages have small difference in
   /// delivery time.
   final bool shouldRenderTime;
+
+  bool isSelected;
 
   Widget _buildMessage() {
     const Color deletedUserColor = Color(0xFF8F99A1);

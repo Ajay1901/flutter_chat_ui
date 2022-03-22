@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_chat_ui/src/widgets/selected_tick_icon.dart';
 import 'package:intl/intl.dart';
 
 import 'file_message.dart';
@@ -13,7 +14,7 @@ import 'text_message.dart';
 /// a nice look on larger screens.
 class Message extends StatelessWidget {
   /// Creates a particular message from any message type
-  const Message({
+  Message({
     Key? key,
     this.dateLocale,
     required this.message,
@@ -26,6 +27,7 @@ class Message extends StatelessWidget {
     this.usersUidMap,
     this.deviceTimeOffset = 0,
     this.room,
+    this.isSelected = false,
   }) : super(key: key);
 
   final Map<String, String>? usersUidMap;
@@ -61,6 +63,8 @@ class Message extends StatelessWidget {
   /// received messages and when sent messages have small difference in
   /// delivery time.
   final bool shouldRenderTime;
+
+  bool isSelected;
 
   Widget _buildMessage() {
     const Color deletedUserColor = Color(0xFF8F99A1);
@@ -116,7 +120,7 @@ class Message extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   name,
-                  style: TextStyle(color: color,fontWeight: fontWeight),
+                  style: TextStyle(color: color, fontWeight: fontWeight),
                 ),
               )
             else
@@ -239,49 +243,66 @@ class Message extends StatelessWidget {
     );
     final _currentUserIsAuthor = _user.id == message.authorId;
 
-    return Container(
-      alignment: _user.id == message.authorId
-          ? Alignment.centerRight
-          : Alignment.centerLeft,
-      margin: EdgeInsets.only(
-        bottom: previousMessageSameAuthor ? 8 : 16,
-        left: 24,
-        right: 24,
-      ),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: messageWidth.toDouble(),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            GestureDetector(
-              onLongPress: () => onMessageLongPress?.call(message),
-              onTap: () => onMessageTap?.call(message),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: _borderRadius,
-                  color: !_currentUserIsAuthor ||
-                          message.type == types.MessageType.image
-                      ? InheritedChatTheme.of(context).theme.secondaryColor
-                      : InheritedChatTheme.of(context).theme.primaryColor,
-                ),
-                child: ClipRRect(
-                  borderRadius: _borderRadius,
-                  child: _buildMessage(),
-                ),
-              ),
+    return Row(
+      mainAxisAlignment: _currentUserIsAuthor
+          ? MainAxisAlignment.spaceBetween
+          : MainAxisAlignment.start,
+      children: [
+        // ignore: prefer_if_elements_to_conditional_expressions
+        isSelected ? const SelectedTickMarkIcon() : const SizedBox(),
+        Container(
+          alignment: _user.id == message.authorId
+              ? Alignment.centerRight
+              : Alignment.centerLeft,
+          margin: EdgeInsets.only(
+            bottom: previousMessageSameAuthor ? 8 : 16,
+            left: 24,
+            right: 24,
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: messageWidth.toDouble(),
             ),
-            if (shouldRenderTime)
-              Container(
-                margin: const EdgeInsets.only(
-                  top: 8,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onLongPress: () => onMessageLongPress?.call(message),
+                  onTap: () => onMessageTap?.call(message),
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: _borderRadius,
+                          color: !_currentUserIsAuthor ||
+                                  message.type == types.MessageType.image
+                              ? InheritedChatTheme.of(context)
+                                  .theme
+                                  .secondaryColor
+                              : InheritedChatTheme.of(context)
+                                  .theme
+                                  .primaryColor,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: _borderRadius,
+                          child: _buildMessage(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: _buildTime(_currentUserIsAuthor, context),
-              )
-          ],
+                if (shouldRenderTime)
+                  Container(
+                    margin: const EdgeInsets.only(
+                      top: 8,
+                    ),
+                    child: _buildTime(_currentUserIsAuthor, context),
+                  )
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

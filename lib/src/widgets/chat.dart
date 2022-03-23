@@ -163,6 +163,7 @@ class _ChatState extends State<Chat> {
   void clearSelectedMessages() {
     _selectedMessages.clear();
     widget.isMultiselectOn = false;
+    widget.selectedMessages?.call(_selectedMessages);
   }
 
   void _onPageChanged(int index) {
@@ -249,60 +250,7 @@ class _ChatState extends State<Chat> {
                   bottom: false,
                   child: Column(
                     children: [
-                      Visibility(
-                        visible: widget.isMultiselectOn,
-                        child: ButtonBar(
-                          alignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                                onPressed: () {
-                                  clearSelectedMessages();
-                                  setState(() {});
-                                },
-                                icon: Icon(Icons.arrow_back)),
-                            Row(
-                              children: [
-                                Visibility(
-                                  visible: _isCopyVisible,
-                                  child: IconButton(
-                                      onPressed: () {
-                                        copySelectedMessage();
-                                        clearSelectedMessages();
-
-                                        final snackBar = SnackBar(
-                                          duration:
-                                              const Duration(milliseconds: 500),
-                                          content: const Text(
-                                            'Copied',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                          behavior: SnackBarBehavior.floating,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(24),
-                                          ),
-                                          margin: EdgeInsets.fromLTRB(
-                                              140, 30, 130, 100),
-                                          backgroundColor: Colors.grey[700],
-                                        );
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                        setState(() {});
-                                      },
-                                      icon: const Icon(Icons.copy)),
-                                ),
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.delete,
-                                      color: Colors.red[700],
-                                    )),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      multiSelectionOptionsBar(),
                       Flexible(
                         child: widget.messages.isEmpty
                             ? SizedBox.expand(
@@ -489,8 +437,14 @@ class _ChatState extends State<Chat> {
                       ),
                       Input(
                         isAttachmentUploading: widget.isAttachmentUploading,
-                        onAttachmentPressed: widget.onAttachmentPressed,
-                        onSendPressed: widget.onSendPressed,
+                        onAttachmentPressed: () {
+                          clearSelectedMessages();
+                          widget.onAttachmentPressed?.call();
+                        },
+                        onSendPressed: (text) {
+                          clearSelectedMessages();
+                          widget.onSendPressed(text);
+                        },
                       ),
                     ],
                   ),
@@ -502,5 +456,61 @@ class _ChatState extends State<Chat> {
         ),
       ),
     );
+  }
+
+  Visibility multiSelectionOptionsBar() {
+    return Visibility(
+      visible: widget.isMultiselectOn,
+      child: ButtonBar(
+        alignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+              onPressed: () {
+                clearSelectedMessages();
+                setState(() {});
+              },
+              icon: Icon(Icons.arrow_back)),
+          Row(
+            children: [
+              Visibility(
+                visible: _isCopyVisible,
+                child: IconButton(
+                    onPressed: () {
+                      copySelectedMessage();
+                      clearSelectedMessages();
+                      showCopiedSnackbar();
+                      setState(() {});
+                    },
+                    icon: const Icon(Icons.copy)),
+              ),
+              IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.red[700],
+                  )),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showCopiedSnackbar() {
+    final snackBar = SnackBar(
+      duration: const Duration(milliseconds: 500),
+      content: const Text(
+        'Copied',
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 14),
+      ),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      margin: EdgeInsets.fromLTRB(140, 30, 130, 100),
+      backgroundColor: Colors.grey[700],
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

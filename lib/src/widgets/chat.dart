@@ -98,6 +98,7 @@ class _ChatState extends State<Chat> {
   bool _isImageViewVisible = false;
   int _imageViewIndex = 0;
   List<types.Message> _selectedMessages = [];
+  bool _isCopyVisible = true;
 
   Widget _imageGalleryLoadingBuilder(
     BuildContext context,
@@ -136,6 +137,32 @@ class _ChatState extends State<Chat> {
       _isImageViewVisible = true;
       _imageViewIndex = galleryItems.indexOf(uri);
     });
+  }
+
+  Future<void> copySelectedMessage() async {
+    var copiedMessages = "";
+    for (var i = 0; i < _selectedMessages.length; i++) {
+      final textMessage = _selectedMessages[i] as types.TextMessage;
+      copiedMessages = copiedMessages + '${textMessage.text}\n';
+    }
+    var data = ClipboardData(text: copiedMessages);
+    await Clipboard.setData(data);
+  }
+
+  int copyButtonVisiblityChecker() {
+    int flag = 0;
+    for (var i = 0; i < _selectedMessages.length; i++) {
+      if (_selectedMessages[i].type == types.MessageType.file ||
+          _selectedMessages[i].type == types.MessageType.image) {
+        flag++;
+      }
+    }
+    return flag;
+  }
+
+  void clearSelectedMessages() {
+    _selectedMessages.clear();
+    widget.isMultiselectOn = false;
   }
 
   void _onPageChanged(int index) {
@@ -222,6 +249,60 @@ class _ChatState extends State<Chat> {
                   bottom: false,
                   child: Column(
                     children: [
+                      Visibility(
+                        visible: widget.isMultiselectOn,
+                        child: ButtonBar(
+                          alignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  clearSelectedMessages();
+                                  setState(() {});
+                                },
+                                icon: Icon(Icons.arrow_back)),
+                            Row(
+                              children: [
+                                Visibility(
+                                  visible: _isCopyVisible,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        copySelectedMessage();
+                                        clearSelectedMessages();
+
+                                        final snackBar = SnackBar(
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                          content: const Text(
+                                            'Copied',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                          behavior: SnackBarBehavior.floating,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(24),
+                                          ),
+                                          margin: EdgeInsets.fromLTRB(
+                                              140, 30, 130, 100),
+                                          backgroundColor: Colors.grey[700],
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(Icons.copy)),
+                                ),
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: Colors.red[700],
+                                    )),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                       Flexible(
                         child: widget.messages.isEmpty
                             ? SizedBox.expand(
@@ -251,11 +332,10 @@ class _ChatState extends State<Chat> {
                                       return Container(height: 16);
                                     }
 
-                                    final message =
-                                        widget.messages[index];
+                                    final message = widget.messages[index];
                                     final isFirst = index == 0;
-                                    final isLast = index ==
-                                        widget.messages.length - 1;
+                                    final isLast =
+                                        index == widget.messages.length - 1;
                                     final nextMessage = isLast
                                         ? null
                                         : widget.messages[index + 1];
@@ -274,14 +354,12 @@ class _ChatState extends State<Chat> {
                                       nextMessageDifferentDay = message
                                                   .timestamp !=
                                               null &&
-                                          DateTime
-                                                  .fromMillisecondsSinceEpoch(
+                                          DateTime.fromMillisecondsSinceEpoch(
                                                 message.timestamp! * 1000,
                                               ).day !=
                                               DateTime
                                                   .fromMillisecondsSinceEpoch(
-                                                nextMessage.timestamp! *
-                                                    1000,
+                                                nextMessage.timestamp! * 1000,
                                               ).day;
                                       nextMessageSameAuthor =
                                           nextMessage.authorId ==
@@ -292,15 +370,12 @@ class _ChatState extends State<Chat> {
                                       previousMessageSameAuthor =
                                           previousMessage.authorId ==
                                               message.authorId;
-                                      shouldRenderTime = message
-                                                  .timestamp !=
+                                      shouldRenderTime = message.timestamp !=
                                               null &&
-                                          previousMessage.timestamp !=
-                                              null &&
+                                          previousMessage.timestamp != null &&
                                           (!previousMessageSameAuthor ||
                                               previousMessage.timestamp! -
-                                                      message
-                                                          .timestamp! >=
+                                                      message.timestamp! >=
                                                   60);
                                     }
 
@@ -308,8 +383,7 @@ class _ChatState extends State<Chat> {
                                       children: [
                                         if (nextMessageDifferentDay ||
                                             (isLast &&
-                                                message.timestamp !=
-                                                    null))
+                                                message.timestamp != null))
                                           Container(
                                             margin: EdgeInsets.only(
                                               bottom: 32,
@@ -321,23 +395,22 @@ class _ChatState extends State<Chat> {
                                               getVerboseDateTimeRepresentation(
                                                 DateTime
                                                     .fromMillisecondsSinceEpoch(
-                                                  message.timestamp! *
-                                                      1000,
+                                                  message.timestamp! * 1000,
                                                 ),
                                                 widget.dateLocale,
                                                 widget.l10n.today,
                                                 widget.l10n.yesterday,
                                               ),
-                                              style: widget
-                                                  .theme.subtitle2
+                                              style: widget.theme.subtitle2
                                                   .copyWith(
-                                                color: widget
-                                                    .theme.subtitle2Color,
+                                                color:
+                                                    widget.theme.subtitle2Color,
                                               ),
                                             ),
                                           ),
                                         Message(
-                                          isSelected: _isMessageSelected(message),
+                                          isSelected:
+                                              _isMessageSelected(message),
                                           deviceTimeOffset:
                                               widget.deviceTimeOffset,
                                           key: ValueKey(message),
@@ -347,34 +420,50 @@ class _ChatState extends State<Chat> {
                                           message: message,
                                           messageWidth: _messageWidth,
                                           onMessageLongPress: (message) {
+                                            if (widget.isMultiselectOn ==
+                                                true) {
+                                              return;
+                                            }
+                                            if (message.type ==
+                                                    types.MessageType.file ||
+                                                message.type ==
+                                                    types.MessageType.image) {
+                                              _isCopyVisible = false;
+                                            } else {
+                                              _isCopyVisible = true;
+                                            }
                                             widget.onMessageLongPress
                                                 ?.call(message);
                                             widget.isMultiselectOn = true;
                                             _selectedMessages.add(message);
-                                             widget.selectedMessages
+                                            widget.selectedMessages
                                                 ?.call(_selectedMessages);
                                             setState(() {});
                                           },
                                           onMessageTap: (tappedMessage) {
                                             if (widget.isMultiselectOn) {
-                                               _selectedMessages
-                                                      .contains(
-                                                          tappedMessage)
+                                              _selectedMessages
+                                                      .contains(tappedMessage)
                                                   ? _selectedMessages
-                                                      .remove(
-                                                          tappedMessage)
-                                                  : _selectedMessages.add(
-                                                      tappedMessage);
+                                                      .remove(tappedMessage)
+                                                  : _selectedMessages
+                                                      .add(tappedMessage);
                                               if (_selectedMessages.isEmpty) {
                                                 widget.isMultiselectOn = false;
                                               }
                                               widget.selectedMessages
-                                                  ?.call(
-                                                      _selectedMessages);
-                                                setState(() {});
+                                                  ?.call(_selectedMessages);
+                                              var flag =
+                                                  copyButtonVisiblityChecker();
+                                              if (flag >= 1) {
+                                                _isCopyVisible = false;
+                                              } else {
+                                                _isCopyVisible = true;
+                                              }
+                                              setState(() {});
                                             } else {
-                                              if (tappedMessage is types
-                                                      .ImageMessage &&
+                                              if (tappedMessage
+                                                      is types.ImageMessage &&
                                                   widget.disableImageGallery !=
                                                       true) {
                                                 _onImagePressed(
@@ -382,7 +471,7 @@ class _ChatState extends State<Chat> {
                                                   galleryItems,
                                                 );
                                               }
-                                               widget.onMessageTap
+                                              widget.onMessageTap
                                                   ?.call(tappedMessage);
                                             }
                                           },
@@ -390,8 +479,7 @@ class _ChatState extends State<Chat> {
                                               _onPreviewDataFetched,
                                           previousMessageSameAuthor:
                                               previousMessageSameAuthor,
-                                          shouldRenderTime:
-                                              shouldRenderTime,
+                                          shouldRenderTime: shouldRenderTime,
                                         ),
                                       ],
                                     );

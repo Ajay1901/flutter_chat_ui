@@ -190,17 +190,15 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Chat(
-        messages: _messages,
-        onAttachmentPressed: _handleAtachmentPressed,
-        onMessageTap: _handleMessageTap,
-        onPreviewDataFetched: _handlePreviewDataFetched,
-        onSendPressed: _handleSendPressed,
-        user: _user,
-        selectedMessages: (_messages){
-          
-          print("Selected Messages ${_messages.length}");
-        }
-      ),
+          messages: _messages,
+          onAttachmentPressed: _handleAtachmentPressed,
+          onMessageTap: _handleMessageTap,
+          onPreviewDataFetched: _handlePreviewDataFetched,
+          onSendPressed: _handleSendPressed,
+          user: _user,
+          selectedMessages: (_messages) {
+            //print("Selected Messages ${_messages}");
+          }),
     );
   }
 }

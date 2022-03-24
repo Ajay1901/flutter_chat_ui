@@ -19,7 +19,7 @@ import 'message.dart';
 /// Entry widget, represents the complete chat
 class Chat extends StatefulWidget {
   /// Creates a chat widget
-  const Chat({
+  Chat({
     Key? key,
     this.dateLocale,
     this.disableImageGallery,
@@ -36,6 +36,8 @@ class Chat extends StatefulWidget {
     this.usersUidMap,
     this.deviceTimeOffset = 0,
     this.room,
+    this.isMultiselectOn = false,
+    this.selectedMessages,
   }) : super(key: key);
 
   final Map<String, String>? usersUidMap;
@@ -83,6 +85,10 @@ class Chat extends StatefulWidget {
   /// See [InheritedUser.user]
   final types.User user;
 
+  bool isMultiselectOn;
+
+  final Function(List<types.Message>)? selectedMessages;
+
   @override
   _ChatState createState() => _ChatState();
 }
@@ -91,6 +97,8 @@ class Chat extends StatefulWidget {
 class _ChatState extends State<Chat> {
   bool _isImageViewVisible = false;
   int _imageViewIndex = 0;
+  List<types.Message> _selectedMessages = [];
+  bool _isCopyVisible = true;
 
   Widget _imageGalleryLoadingBuilder(
     BuildContext context,
@@ -109,6 +117,10 @@ class _ChatState extends State<Chat> {
     );
   }
 
+  bool _isMessageSelected(types.Message message) {
+    return _selectedMessages.contains(message);
+  }
+
   void _onCloseGalleryPressed() {
     setState(() {
       _isImageViewVisible = false;
@@ -125,6 +137,33 @@ class _ChatState extends State<Chat> {
       _isImageViewVisible = true;
       _imageViewIndex = galleryItems.indexOf(uri);
     });
+  }
+
+  Future<void> copySelectedMessage() async {
+    var copiedMessages = "";
+    for (var i = 0; i < _selectedMessages.length; i++) {
+      final textMessage = _selectedMessages[i] as types.TextMessage;
+      copiedMessages = copiedMessages + '${textMessage.text}\n';
+    }
+    var data = ClipboardData(text: copiedMessages);
+    await Clipboard.setData(data);
+  }
+
+  int copyButtonVisiblityChecker() {
+    int flag = 0;
+    for (var i = 0; i < _selectedMessages.length; i++) {
+      if (_selectedMessages[i].type == types.MessageType.file ||
+          _selectedMessages[i].type == types.MessageType.image) {
+        flag++;
+      }
+    }
+    return flag;
+  }
+
+  void clearSelectedMessages() {
+    _selectedMessages.clear();
+    widget.isMultiselectOn = false;
+    widget.selectedMessages?.call(_selectedMessages);
   }
 
   void _onPageChanged(int index) {
@@ -211,6 +250,7 @@ class _ChatState extends State<Chat> {
                   bottom: false,
                   child: Column(
                     children: [
+                      multiSelectionOptionsBar(),
                       Flexible(
                         child: widget.messages.isEmpty
                             ? SizedBox.expand(
@@ -317,6 +357,8 @@ class _ChatState extends State<Chat> {
                                             ),
                                           ),
                                         Message(
+                                          isSelected:
+                                              _isMessageSelected(message),
                                           deviceTimeOffset:
                                               widget.deviceTimeOffset,
                                           key: ValueKey(message),
@@ -325,21 +367,61 @@ class _ChatState extends State<Chat> {
                                           dateLocale: widget.dateLocale,
                                           message: message,
                                           messageWidth: _messageWidth,
-                                          onMessageLongPress:
-                                              widget.onMessageLongPress,
-                                          onMessageTap: (tappedMessage) {
-                                            if (tappedMessage
-                                                    is types.ImageMessage &&
-                                                widget.disableImageGallery !=
-                                                    true) {
-                                              _onImagePressed(
-                                                tappedMessage.uri,
-                                                galleryItems,
-                                              );
+                                          onMessageLongPress: (message) {
+                                            if (widget.isMultiselectOn ==
+                                                true) {
+                                              return;
                                             }
-
-                                            widget.onMessageTap
-                                                ?.call(tappedMessage);
+                                            if (message.type ==
+                                                    types.MessageType.file ||
+                                                message.type ==
+                                                    types.MessageType.image) {
+                                              _isCopyVisible = false;
+                                            } else {
+                                              _isCopyVisible = true;
+                                            }
+                                            widget.onMessageLongPress
+                                                ?.call(message);
+                                            widget.isMultiselectOn = true;
+                                            _selectedMessages.add(message);
+                                            widget.selectedMessages
+                                                ?.call(_selectedMessages);
+                                            setState(() {});
+                                          },
+                                          onMessageTap: (tappedMessage) {
+                                            if (widget.isMultiselectOn) {
+                                              _selectedMessages
+                                                      .contains(tappedMessage)
+                                                  ? _selectedMessages
+                                                      .remove(tappedMessage)
+                                                  : _selectedMessages
+                                                      .add(tappedMessage);
+                                              if (_selectedMessages.isEmpty) {
+                                                widget.isMultiselectOn = false;
+                                              }
+                                              widget.selectedMessages
+                                                  ?.call(_selectedMessages);
+                                              var flag =
+                                                  copyButtonVisiblityChecker();
+                                              if (flag >= 1) {
+                                                _isCopyVisible = false;
+                                              } else {
+                                                _isCopyVisible = true;
+                                              }
+                                              setState(() {});
+                                            } else {
+                                              if (tappedMessage
+                                                      is types.ImageMessage &&
+                                                  widget.disableImageGallery !=
+                                                      true) {
+                                                _onImagePressed(
+                                                  tappedMessage.uri,
+                                                  galleryItems,
+                                                );
+                                              }
+                                              widget.onMessageTap
+                                                  ?.call(tappedMessage);
+                                            }
                                           },
                                           onPreviewDataFetched:
                                               _onPreviewDataFetched,
@@ -355,8 +437,14 @@ class _ChatState extends State<Chat> {
                       ),
                       Input(
                         isAttachmentUploading: widget.isAttachmentUploading,
-                        onAttachmentPressed: widget.onAttachmentPressed,
-                        onSendPressed: widget.onSendPressed,
+                        onAttachmentPressed: () {
+                          clearSelectedMessages();
+                          widget.onAttachmentPressed?.call();
+                        },
+                        onSendPressed: (text) {
+                          clearSelectedMessages();
+                          widget.onSendPressed(text);
+                        },
                       ),
                     ],
                   ),
@@ -368,5 +456,61 @@ class _ChatState extends State<Chat> {
         ),
       ),
     );
+  }
+
+  Visibility multiSelectionOptionsBar() {
+    return Visibility(
+      visible: widget.isMultiselectOn,
+      child: ButtonBar(
+        alignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+              onPressed: () {
+                clearSelectedMessages();
+                setState(() {});
+              },
+              icon: Icon(Icons.arrow_back)),
+          Row(
+            children: [
+              Visibility(
+                visible: _isCopyVisible,
+                child: IconButton(
+                    onPressed: () {
+                      copySelectedMessage();
+                      clearSelectedMessages();
+                      showCopiedSnackbar();
+                      setState(() {});
+                    },
+                    icon: const Icon(Icons.copy)),
+              ),
+              IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.red[700],
+                  )),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showCopiedSnackbar() {
+    final snackBar = SnackBar(
+      duration: const Duration(milliseconds: 500),
+      content: const Text(
+        'Copied',
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 14),
+      ),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      margin: EdgeInsets.fromLTRB(140, 30, 130, 100),
+      backgroundColor: Colors.grey[700],
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

@@ -146,6 +146,7 @@ class _ChatPageState extends State<ChatPage> {
     if (message is types.FileMessage) {
       await OpenFile.open(message.uri);
     }
+    print("I am Tapped");
   }
 
   void _handlePreviewDataFetched(
@@ -183,17 +184,21 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+  bool isMultiSelecteon = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Chat(
-        messages: _messages,
-        onAttachmentPressed: _handleAtachmentPressed,
-        onMessageTap: _handleMessageTap,
-        onPreviewDataFetched: _handlePreviewDataFetched,
-        onSendPressed: _handleSendPressed,
-        user: _user,
-      ),
+          messages: _messages,
+          onAttachmentPressed: _handleAtachmentPressed,
+          onMessageTap: _handleMessageTap,
+          onPreviewDataFetched: _handlePreviewDataFetched,
+          onSendPressed: _handleSendPressed,
+          user: _user,
+          selectedMessages: (_messages) {
+            //print("Selected Messages ${_messages}");
+          }),
     );
   }
 }

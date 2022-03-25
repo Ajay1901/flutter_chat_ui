@@ -42,6 +42,7 @@ class Chat extends StatefulWidget {
     this.isEditButtonVisible = false,
     this.onEditMessage,
     this.selectedMessages,
+    this.onDeleteMessages,
   }) : super(key: key);
 
   final Map<String, String>? usersUidMap;
@@ -54,7 +55,9 @@ class Chat extends StatefulWidget {
   final bool? isDeleteButtonVisible;
   final bool? isEditButtonVisible;
 
-  final Function({types.TextMessage message, String text})? onEditMessage;
+
+  final Function(types.TextMessage message, String text)? onEditMessage;
+  final Function(List<types.Message> messages)? onDeleteMessages;
 
   /// Disable automatic image preview on tap.
   final bool? disableImageGallery;
@@ -513,6 +516,8 @@ class _ChatState extends State<Chat> {
                 IconButton(
                     tooltip: 'Delete',
                     onPressed: () {
+                      widget.onDeleteMessages?.call(
+                          _selectedMessages);
                       clearSelectedMessages();
                       setState(() {});
                     },
@@ -611,8 +616,8 @@ class _ChatState extends State<Chat> {
                             textEditingController.text.trim() !=
                                 message.text.trim()) {
                           widget.onEditMessage?.call(
-                            message: message,
-                            text: textEditingController.text,
+                            message,
+                            textEditingController.text,
                           );
                         }
                       },

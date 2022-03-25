@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,6 +38,9 @@ class Chat extends StatefulWidget {
     this.deviceTimeOffset = 0,
     this.room,
     this.isMultiselectOn = false,
+    this.isDeleteButtonVisible = true,
+    this.isEditButtonVisible = true,
+    this.onEditMessage,
     this.selectedMessages,
   }) : super(key: key);
 
@@ -46,6 +50,11 @@ class Chat extends StatefulWidget {
 
   /// See [Message.dateLocale]
   final String? dateLocale;
+
+  final bool? isDeleteButtonVisible;
+  final bool? isEditButtonVisible;
+
+  final Function({types.TextMessage message, String text})? onEditMessage;
 
   /// Disable automatic image preview on tap.
   final bool? disableImageGallery;
@@ -99,6 +108,8 @@ class _ChatState extends State<Chat> {
   int _imageViewIndex = 0;
   List<types.Message> _selectedMessages = [];
   bool _isCopyVisible = true;
+  bool _isdeleteVisible = true;
+  bool _isEditVisible = true;
 
   Widget _imageGalleryLoadingBuilder(
     BuildContext context,
@@ -140,12 +151,12 @@ class _ChatState extends State<Chat> {
   }
 
   Future<void> copySelectedMessage() async {
-    var copiedMessages = "";
+    var copiedMessages = '';
     for (var i = 0; i < _selectedMessages.length; i++) {
       final textMessage = _selectedMessages[i] as types.TextMessage;
       copiedMessages = copiedMessages + '${textMessage.text}\n';
     }
-    var data = ClipboardData(text: copiedMessages);
+    final data = ClipboardData(text: copiedMessages);
     await Clipboard.setData(data);
   }
 
@@ -235,6 +246,10 @@ class _ChatState extends State<Chat> {
 
       return previousValue;
     });
+
+    _isdeleteVisible = widget.isDeleteButtonVisible ?? true;
+
+    _isEditVisible = widget.isEditButtonVisible ?? true;
 
     return InheritedUser(
       user: widget.user,
@@ -469,12 +484,12 @@ class _ChatState extends State<Chat> {
                 clearSelectedMessages();
                 setState(() {});
               },
-              icon: Icon(Icons.arrow_back)),
+              icon: const Icon(Icons.arrow_back)),
           Row(
             children: [
-              Visibility(
-                visible: _isCopyVisible,
-                child: IconButton(
+              if (_isCopyVisible)
+                IconButton(
+                    tooltip: 'Copy',
                     onPressed: () {
                       copySelectedMessage();
                       clearSelectedMessages();
@@ -482,13 +497,28 @@ class _ChatState extends State<Chat> {
                       setState(() {});
                     },
                     icon: const Icon(Icons.copy)),
-              ),
-              IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.delete,
-                    color: Colors.red[700],
-                  )),
+              if (_isEditVisible)
+                IconButton(
+                    tooltip: 'Edit',
+                    onPressed: () {
+                      _editMessage(
+                          _selectedMessages.first as types.TextMessage);
+                      clearSelectedMessages();
+                      setState(() {});
+                    },
+                    icon: const Icon(
+                      CupertinoIcons.pen,
+                    )),
+              if (_isdeleteVisible)
+                IconButton(
+                    tooltip: 'Delete',
+                    onPressed: () {
+                      clearSelectedMessages();
+                      setState(() {});
+                    },
+                    icon: const Icon(
+                      Icons.delete,
+                    )),
             ],
           ),
         ],
@@ -508,9 +538,94 @@ class _ChatState extends State<Chat> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
       ),
-      margin: EdgeInsets.fromLTRB(140, 30, 130, 100),
+      margin: const EdgeInsets.fromLTRB(140, 30, 130, 100),
       backgroundColor: Colors.grey[700],
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _editMessage(types.TextMessage message) {
+    final textEditingController = TextEditingController(
+      text: message.text,
+    );
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        builder: (context) {
+          return Container(
+            height: 200,
+            margin: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 255, 251, 251),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
+              ),
+            ),
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                Text('Edit Message',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700])),
+                TextField(
+                  controller: textEditingController,
+                  decoration: const InputDecoration(
+                    hintText: 'Edit message',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.redAccent),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        if (textEditingController.text.isNotEmpty &&
+                            textEditingController.text.trim() !=
+                                message.text.trim()) {
+                          widget.onEditMessage?.call(
+                            message: message,
+                            text: textEditingController.text,
+                          );
+                        }
+                      },
+                      child: const Text(
+                        'Save',
+                        // style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
   }
 }

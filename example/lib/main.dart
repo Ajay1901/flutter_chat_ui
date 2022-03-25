@@ -198,7 +198,13 @@ class _ChatPageState extends State<ChatPage> {
           user: _user,
           selectedMessages: (_messages) {
             //print("Selected Messages ${_messages}");
-          }),
+          setState(() {
+            isMultiSelecteon = _messages.isNotEmpty ? true : false;
+          });
+          },
+          isMultiselectOn: isMultiSelecteon,
+          ),
+          
     );
   }
 }

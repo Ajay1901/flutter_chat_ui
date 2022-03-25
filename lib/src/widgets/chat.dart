@@ -38,8 +38,8 @@ class Chat extends StatefulWidget {
     this.deviceTimeOffset = 0,
     this.room,
     this.isMultiselectOn = false,
-    this.isDeleteButtonVisible = true,
-    this.isEditButtonVisible = true,
+    this.isDeleteButtonVisible = false,
+    this.isEditButtonVisible = false,
     this.onEditMessage,
     this.selectedMessages,
   }) : super(key: key);
@@ -106,7 +106,7 @@ class Chat extends StatefulWidget {
 class _ChatState extends State<Chat> {
   bool _isImageViewVisible = false;
   int _imageViewIndex = 0;
-  List<types.Message> _selectedMessages = [];
+  final List<types.Message> _selectedMessages = [];
   bool _isCopyVisible = true;
   bool _isdeleteVisible = true;
   bool _isEditVisible = true;
@@ -136,14 +136,14 @@ class _ChatState extends State<Chat> {
     setState(() {
       _isImageViewVisible = false;
     });
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   }
 
   void _onImagePressed(
     String uri,
     List<String> galleryItems,
   ) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
     setState(() {
       _isImageViewVisible = true;
       _imageViewIndex = galleryItems.indexOf(uri);

@@ -68,7 +68,7 @@ class Message extends StatelessWidget {
 
   Widget _buildMessage() {
     const Color deletedUserColor = Color(0xFF8F99A1);
-    final isGroupChat = usersUidMap != null;
+    final isGroupChat = room?.type == types.RoomType.group;
     String? name;
     var color = Colors.red[200];
     const fontWeight = FontWeight.w600;
@@ -76,7 +76,6 @@ class Message extends StatelessWidget {
     if (isGroupChat && room != null) {
       final authorId = message.authorId;
       final allUserIdsInRoom = room?.users.map((user) => user.id).toList();
-
       if (allUserIdsInRoom != null) {
         if (!allUserIdsInRoom.contains(authorId)) {
           color = deletedUserColor;
@@ -84,7 +83,7 @@ class Message extends StatelessWidget {
       }
     }
 
-    if (usersUidMap != null) {
+    if (usersUidMap != null && isGroupChat) {
       final key = message.authorId;
       name = usersUidMap![key] ?? 'You';
     }

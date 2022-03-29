@@ -158,13 +158,10 @@ class _ChatState extends State<Chat> {
     var copiedMessages = '';
     for (var i = 0; i < _selectedMessages.length; i++) {
       final textMessage = _selectedMessages[i] as types.TextMessage;
-      if (widget.usersUidMap != null) {
-        final key = textMessage.authorId;
-        var name = widget.usersUidMap![key];
-        print(name);
-        copiedMessages = copiedMessages + '[$name] ${textMessage.text}\n';
-      }
-      copiedMessages = copiedMessages + '${textMessage.text}\n';
+      final key = textMessage.authorId;
+      final name = widget.usersUidMap![key];
+      print('KEY: $key + NAME: $name');
+      copiedMessages = copiedMessages + '[$name] ${textMessage.text}\n';
     }
     final data = ClipboardData(text: copiedMessages);
     await Clipboard.setData(data);

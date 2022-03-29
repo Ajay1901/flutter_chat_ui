@@ -402,33 +402,40 @@ class _ChatState extends State<Chat> {
                                             } else {
                                               _isCopyVisible = true;
                                             }
-                                            widget.onMessageLongPress
-                                                ?.call(message);
-                                            widget.isMultiselectOn = true;
-                                            _selectedMessages.add(message);
-                                            widget.selectedMessages
-                                                ?.call(_selectedMessages);
+                                            if (message.type !=
+                                                types.MessageType.deleted) {
+                                              widget.onMessageLongPress
+                                                  ?.call(message);
+                                              widget.isMultiselectOn = true;
+                                              _selectedMessages.add(message);
+                                              widget.selectedMessages
+                                                  ?.call(_selectedMessages);
+                                            }
                                             setState(() {});
                                           },
                                           onMessageTap: (tappedMessage) {
                                             if (widget.isMultiselectOn) {
-                                              _selectedMessages
-                                                      .contains(tappedMessage)
-                                                  ? _selectedMessages
-                                                      .remove(tappedMessage)
-                                                  : _selectedMessages
-                                                      .add(tappedMessage);
-                                              if (_selectedMessages.isEmpty) {
-                                                widget.isMultiselectOn = false;
-                                              }
-                                              widget.selectedMessages
-                                                  ?.call(_selectedMessages);
-                                              var flag =
-                                                  copyButtonVisiblityChecker();
-                                              if (flag >= 1) {
-                                                _isCopyVisible = false;
-                                              } else {
-                                                _isCopyVisible = true;
+                                              if (tappedMessage.type !=
+                                                  types.MessageType.deleted) {
+                                                _selectedMessages
+                                                        .contains(tappedMessage)
+                                                    ? _selectedMessages
+                                                        .remove(tappedMessage)
+                                                    : _selectedMessages
+                                                        .add(tappedMessage);
+                                                if (_selectedMessages.isEmpty) {
+                                                  widget.isMultiselectOn =
+                                                      false;
+                                                }
+                                                widget.selectedMessages
+                                                    ?.call(_selectedMessages);
+                                                var flag =
+                                                    copyButtonVisiblityChecker();
+                                                if (flag >= 1) {
+                                                  _isCopyVisible = false;
+                                                } else {
+                                                  _isCopyVisible = true;
+                                                }
                                               }
                                               setState(() {});
                                             } else {

@@ -491,7 +491,7 @@ class _ChatState extends State<Chat> {
                 clearSelectedMessages();
                 setState(() {});
               },
-              icon: const Icon(Icons.arrow_back)),
+              icon: const Icon(Icons.close)),
           Row(
             children: [
               if (_isCopyVisible)

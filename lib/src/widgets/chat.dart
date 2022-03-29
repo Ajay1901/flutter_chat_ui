@@ -55,7 +55,6 @@ class Chat extends StatefulWidget {
   final bool? isDeleteButtonVisible;
   final bool? isEditButtonVisible;
 
-
   final Function(types.TextMessage message, String text)? onEditMessage;
   final Function(List<types.Message> messages)? onDeleteMessages;
 
@@ -139,14 +138,16 @@ class _ChatState extends State<Chat> {
     setState(() {
       _isImageViewVisible = false;
     });
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
   }
 
   void _onImagePressed(
     String uri,
     List<String> galleryItems,
   ) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.bottom]);
     setState(() {
       _isImageViewVisible = true;
       _imageViewIndex = galleryItems.indexOf(uri);
@@ -157,6 +158,12 @@ class _ChatState extends State<Chat> {
     var copiedMessages = '';
     for (var i = 0; i < _selectedMessages.length; i++) {
       final textMessage = _selectedMessages[i] as types.TextMessage;
+      if (widget.usersUidMap != null) {
+        final key = textMessage.authorId;
+        var name = widget.usersUidMap![key];
+        print(name);
+        copiedMessages = copiedMessages + '[$name] ${textMessage.text}\n';
+      }
       copiedMessages = copiedMessages + '${textMessage.text}\n';
     }
     final data = ClipboardData(text: copiedMessages);
@@ -516,8 +523,7 @@ class _ChatState extends State<Chat> {
                 IconButton(
                     tooltip: 'Delete',
                     onPressed: () {
-                      widget.onDeleteMessages?.call(
-                          _selectedMessages);
+                      widget.onDeleteMessages?.call(_selectedMessages);
                       clearSelectedMessages();
                       setState(() {});
                     },

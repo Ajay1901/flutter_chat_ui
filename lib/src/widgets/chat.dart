@@ -43,9 +43,11 @@ class Chat extends StatefulWidget {
     this.onEditMessage,
     this.selectedMessages,
     this.onDeleteMessages,
+    this.selfUidMap,
   }) : super(key: key);
 
   final Map<String, String>? usersUidMap;
+  final Map<String, String>? selfUidMap;
   final types.Room? room;
   final int deviceTimeOffset;
 
@@ -159,10 +161,12 @@ class _ChatState extends State<Chat> {
     for (var i = 0; i < _selectedMessages.length; i++) {
       final textMessage = _selectedMessages[i] as types.TextMessage;
       final key = textMessage.authorId;
-      final name = widget.usersUidMap![key];
+      var name = widget.usersUidMap![key];
+      name ??= widget.selfUidMap![key];
       print('KEY: $key + NAME: $name');
       copiedMessages = copiedMessages + '[$name] ${textMessage.text}\n';
     }
+    print(copiedMessages);
     final data = ClipboardData(text: copiedMessages);
     await Clipboard.setData(data);
   }

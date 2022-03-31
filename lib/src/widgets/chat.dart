@@ -487,6 +487,7 @@ class _ChatState extends State<Chat> {
         alignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
+              tooltip: 'Cancel',
               onPressed: () {
                 clearSelectedMessages();
                 setState(() {});

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_chat_ui/src/widgets/deleted_message.dart';
 import 'package:flutter_chat_ui/src/widgets/selected_tick_icon.dart';
 import 'package:intl/intl.dart';
 
@@ -151,6 +152,26 @@ class Message extends StatelessWidget {
             ),
           ],
         );
+        case types.MessageType.deleted:
+          final deletedMessage = message as types.DeletedMessage;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (name != null )
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 8, 2),
+                  child: Text(
+                    name,
+                    style: TextStyle(color: color, fontWeight: fontWeight),
+                  ),
+                )
+              else
+                const SizedBox(),
+              DeletedMessage(
+                message: deletedMessage,
+              ),
+            ],
+          );
       default:
         return Container();
     }

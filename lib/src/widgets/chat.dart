@@ -43,9 +43,11 @@ class Chat extends StatefulWidget {
     this.onEditMessage,
     this.selectedMessages,
     this.onDeleteMessages,
+    this.selfUidMap,
   }) : super(key: key);
 
   final Map<String, String>? usersUidMap;
+  final Map<String, String>? selfUidMap;
   final types.Room? room;
   final int deviceTimeOffset;
 
@@ -159,10 +161,12 @@ class _ChatState extends State<Chat> {
     for (var i = 0; i < _selectedMessages.length; i++) {
       final textMessage = _selectedMessages[i] as types.TextMessage;
       final key = textMessage.authorId;
-      final name = widget.usersUidMap![key];
+      var name = widget.usersUidMap![key];
+      name ??= widget.selfUidMap![key];
       print('KEY: $key + NAME: $name');
       copiedMessages = copiedMessages + '[$name] ${textMessage.text}\n';
     }
+    print(copiedMessages);
     final data = ClipboardData(text: copiedMessages);
     await Clipboard.setData(data);
   }
@@ -402,33 +406,40 @@ class _ChatState extends State<Chat> {
                                             } else {
                                               _isCopyVisible = true;
                                             }
-                                            widget.onMessageLongPress
-                                                ?.call(message);
-                                            widget.isMultiselectOn = true;
-                                            _selectedMessages.add(message);
-                                            widget.selectedMessages
-                                                ?.call(_selectedMessages);
+                                            if (message.type !=
+                                                types.MessageType.deleted) {
+                                              widget.onMessageLongPress
+                                                  ?.call(message);
+                                              widget.isMultiselectOn = true;
+                                              _selectedMessages.add(message);
+                                              widget.selectedMessages
+                                                  ?.call(_selectedMessages);
+                                            }
                                             setState(() {});
                                           },
                                           onMessageTap: (tappedMessage) {
                                             if (widget.isMultiselectOn) {
-                                              _selectedMessages
-                                                      .contains(tappedMessage)
-                                                  ? _selectedMessages
-                                                      .remove(tappedMessage)
-                                                  : _selectedMessages
-                                                      .add(tappedMessage);
-                                              if (_selectedMessages.isEmpty) {
-                                                widget.isMultiselectOn = false;
-                                              }
-                                              widget.selectedMessages
-                                                  ?.call(_selectedMessages);
-                                              var flag =
-                                                  copyButtonVisiblityChecker();
-                                              if (flag >= 1) {
-                                                _isCopyVisible = false;
-                                              } else {
-                                                _isCopyVisible = true;
+                                              if (tappedMessage.type !=
+                                                  types.MessageType.deleted) {
+                                                _selectedMessages
+                                                        .contains(tappedMessage)
+                                                    ? _selectedMessages
+                                                        .remove(tappedMessage)
+                                                    : _selectedMessages
+                                                        .add(tappedMessage);
+                                                if (_selectedMessages.isEmpty) {
+                                                  widget.isMultiselectOn =
+                                                      false;
+                                                }
+                                                widget.selectedMessages
+                                                    ?.call(_selectedMessages);
+                                                var flag =
+                                                    copyButtonVisiblityChecker();
+                                                if (flag >= 1) {
+                                                  _isCopyVisible = false;
+                                                } else {
+                                                  _isCopyVisible = true;
+                                                }
                                               }
                                               setState(() {});
                                             } else {

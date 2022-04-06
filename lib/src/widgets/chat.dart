@@ -160,8 +160,8 @@ class _ChatState extends State<Chat> {
 
   Future<void> copySelectedMessage() async {
     _selectedMessages.sort((a, b) {
-      return DateTime.parse(a.timestamp.toString())
-          .compareTo(DateTime.parse(b.timestamp.toString()));
+      return DateTime.fromMillisecondsSinceEpoch(a.timestamp! * 1000)
+          .compareTo(DateTime.fromMillisecondsSinceEpoch(b.timestamp! * 1000));
     });
     var copiedMessages = '';
     for (var i = 0; i < _selectedMessages.length; i++) {

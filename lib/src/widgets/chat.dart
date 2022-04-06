@@ -279,7 +279,7 @@ class _ChatState extends State<Chat> {
             children: [
               Container(
                 color: widget.isMultiselectOn
-                    ? const Color(0xff1d1d21).withOpacity(0.8)
+                    ? const Color(0xff1d1d21).withOpacity(0.92)
                     : widget.theme.backgroundColor,
                 child: SafeArea(
                   bottom: false,
@@ -523,7 +523,7 @@ class _ChatState extends State<Chat> {
     return Visibility(
       visible: widget.isMultiselectOn,
       child: Container(
-        color: const Color(0xff1d1d21).withOpacity(0.8),
+        color: const Color(0xff1d1d21).withOpacity(0.92),
         child: ButtonBar(
           alignment: MainAxisAlignment.spaceBetween,
           children: [

@@ -217,10 +217,7 @@ class _ChatPageState extends State<ChatPage> {
           // selfUidMap: {"06c33e8b-e835-4736-80f4-63f44b66666c": "IAM"},
           isEditButtonVisible: true,
           isMultiselectOn: isMultiSelecteon,
-          onEditMessage: (message, text) {
-            print("Edit Message ${message}");
-            print("Edit Message ${text}");
-          }),
+          onEditMessage: (message, text) {}),
     );
   }
 }

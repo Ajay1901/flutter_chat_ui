@@ -152,7 +152,6 @@ class _ChatPageState extends State<ChatPage> {
     if (message is types.FileMessage) {
       await OpenFile.open(message.uri);
     }
-    print("I am Tapped");
   }
 
   void _handlePreviewDataFetched(

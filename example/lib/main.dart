@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart'
+    show SystemChrome, SystemUiOverlayStyle, rootBundle;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
@@ -11,6 +12,10 @@ import 'package:open_file/open_file.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
+  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+  //     statusBarColor: Colors.purple,
+  //     statusBarBrightness: Brightness.dark,
+  //     systemNavigationBarColor: Colors.black));
   initializeDateFormatting().then((_) => runApp(const MyApp()));
 }
 
@@ -20,6 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: ChatPage(),
     );
   }
@@ -208,7 +214,7 @@ class _ChatPageState extends State<ChatPage> {
           //   "0z45xIezYLbbcIvluWaRK3lk9hh1": "Vijay Anand",
           //   "b4878b96-efbc-479a-8291-474ef323dec7": "Other",
           // },
-          //selfUidMap: {"06c33e8b-e835-4736-80f4-63f44b66666c": "IAM"},
+          // selfUidMap: {"06c33e8b-e835-4736-80f4-63f44b66666c": "IAM"},
           isEditButtonVisible: true,
           isMultiselectOn: isMultiSelecteon,
           onEditMessage: (message, text) {

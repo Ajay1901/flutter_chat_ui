@@ -269,8 +269,6 @@ class _ChatState extends State<Chat> {
     _isdeleteVisible = widget.isDeleteButtonVisible ?? true;
 
     _isEditVisible = widget.isEditButtonVisible ?? true;
-    print(widget.theme.backgroundColor);
-    print(widget.theme);
     return InheritedUser(
       user: widget.user,
       child: InheritedChatTheme(
@@ -280,215 +278,236 @@ class _ChatState extends State<Chat> {
           child: Stack(
             children: [
               Container(
-                color: widget.theme.backgroundColor,
+                color: widget.isMultiselectOn
+                    ? const Color(0xff1d1d21).withOpacity(0.8)
+                    : widget.theme.backgroundColor,
                 child: SafeArea(
                   bottom: false,
-                  child: Column(
-                    children: [
-                      multiSelectionOptionsBar(),
-                      Flexible(
-                        child: widget.messages.isEmpty
-                            ? SizedBox.expand(
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                  ),
-                                  child: Text(
-                                    widget.l10n.emptyChatPlaceholder,
-                                    style: widget.theme.body1.copyWith(
-                                      color: widget.theme.captionColor,
+                  child: Container(
+                    color: widget.theme.backgroundColor,
+                    child: SafeArea(
+                      bottom: false,
+                      child: Column(
+                        children: [
+                          multiSelectionOptionsBar(),
+                          Flexible(
+                            child: widget.messages.isEmpty
+                                ? SizedBox.expand(
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 24,
+                                      ),
+                                      child: Text(
+                                        widget.l10n.emptyChatPlaceholder,
+                                        style: widget.theme.body1.copyWith(
+                                          color: widget.theme.captionColor,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              )
-                            : GestureDetector(
-                                onTap: () => FocusManager.instance.primaryFocus
-                                    ?.unfocus(),
-                                child: ListView.builder(
-                                  itemCount: widget.messages.length + 1,
-                                  padding: EdgeInsets.zero,
-                                  reverse: true,
-                                  itemBuilder: (context, index) {
-                                    if (index == widget.messages.length) {
-                                      return Container(height: 16);
-                                    }
+                                  )
+                                : GestureDetector(
+                                    onTap: () => FocusManager
+                                        .instance.primaryFocus
+                                        ?.unfocus(),
+                                    child: ListView.builder(
+                                      itemCount: widget.messages.length + 1,
+                                      padding: EdgeInsets.zero,
+                                      reverse: true,
+                                      itemBuilder: (context, index) {
+                                        if (index == widget.messages.length) {
+                                          return Container(height: 16);
+                                        }
 
-                                    final message = widget.messages[index];
-                                    final isFirst = index == 0;
-                                    final isLast =
-                                        index == widget.messages.length - 1;
-                                    final nextMessage = isLast
-                                        ? null
-                                        : widget.messages[index + 1];
-                                    final previousMessage = isFirst
-                                        ? null
-                                        : widget.messages[index - 1];
+                                        final message = widget.messages[index];
+                                        final isFirst = index == 0;
+                                        final isLast =
+                                            index == widget.messages.length - 1;
+                                        final nextMessage = isLast
+                                            ? null
+                                            : widget.messages[index + 1];
+                                        final previousMessage = isFirst
+                                            ? null
+                                            : widget.messages[index - 1];
 
-                                    var nextMessageDifferentDay = false;
-                                    var nextMessageSameAuthor = false;
-                                    var previousMessageSameAuthor = false;
-                                    var shouldRenderTime =
-                                        message.timestamp != null;
+                                        var nextMessageDifferentDay = false;
+                                        var nextMessageSameAuthor = false;
+                                        var previousMessageSameAuthor = false;
+                                        var shouldRenderTime =
+                                            message.timestamp != null;
 
-                                    if (nextMessage != null &&
-                                        nextMessage.timestamp != null) {
-                                      nextMessageDifferentDay = message
-                                                  .timestamp !=
-                                              null &&
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                                message.timestamp! * 1000,
-                                              ).day !=
+                                        if (nextMessage != null &&
+                                            nextMessage.timestamp != null) {
+                                          nextMessageDifferentDay = message
+                                                      .timestamp !=
+                                                  null &&
                                               DateTime
-                                                  .fromMillisecondsSinceEpoch(
-                                                nextMessage.timestamp! * 1000,
-                                              ).day;
-                                      nextMessageSameAuthor =
-                                          nextMessage.authorId ==
-                                              message.authorId;
-                                    }
+                                                      .fromMillisecondsSinceEpoch(
+                                                    message.timestamp! * 1000,
+                                                  ).day !=
+                                                  DateTime
+                                                      .fromMillisecondsSinceEpoch(
+                                                    nextMessage.timestamp! *
+                                                        1000,
+                                                  ).day;
+                                          nextMessageSameAuthor =
+                                              nextMessage.authorId ==
+                                                  message.authorId;
+                                        }
 
-                                    if (previousMessage != null) {
-                                      previousMessageSameAuthor =
-                                          previousMessage.authorId ==
-                                              message.authorId;
-                                      shouldRenderTime = message.timestamp !=
-                                              null &&
-                                          previousMessage.timestamp != null &&
-                                          (!previousMessageSameAuthor ||
-                                              previousMessage.timestamp! -
-                                                      message.timestamp! >=
-                                                  60);
-                                    }
+                                        if (previousMessage != null) {
+                                          previousMessageSameAuthor =
+                                              previousMessage.authorId ==
+                                                  message.authorId;
+                                          shouldRenderTime = message
+                                                      .timestamp !=
+                                                  null &&
+                                              previousMessage.timestamp !=
+                                                  null &&
+                                              (!previousMessageSameAuthor ||
+                                                  previousMessage.timestamp! -
+                                                          message.timestamp! >=
+                                                      60);
+                                        }
 
-                                    return Column(
-                                      children: [
-                                        if (nextMessageDifferentDay ||
-                                            (isLast &&
-                                                message.timestamp != null))
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                              bottom: 32,
-                                              top: nextMessageSameAuthor
-                                                  ? 24
-                                                  : 16,
-                                            ),
-                                            child: Text(
-                                              getVerboseDateTimeRepresentation(
-                                                DateTime
-                                                    .fromMillisecondsSinceEpoch(
-                                                  message.timestamp! * 1000,
+                                        return Column(
+                                          children: [
+                                            if (nextMessageDifferentDay ||
+                                                (isLast &&
+                                                    message.timestamp != null))
+                                              Container(
+                                                margin: EdgeInsets.only(
+                                                  bottom: 32,
+                                                  top: nextMessageSameAuthor
+                                                      ? 24
+                                                      : 16,
                                                 ),
-                                                widget.dateLocale,
-                                                widget.l10n.today,
-                                                widget.l10n.yesterday,
+                                                child: Text(
+                                                  getVerboseDateTimeRepresentation(
+                                                    DateTime
+                                                        .fromMillisecondsSinceEpoch(
+                                                      message.timestamp! * 1000,
+                                                    ),
+                                                    widget.dateLocale,
+                                                    widget.l10n.today,
+                                                    widget.l10n.yesterday,
+                                                  ),
+                                                  style: widget.theme.subtitle2
+                                                      .copyWith(
+                                                    color: widget
+                                                        .theme.subtitle2Color,
+                                                  ),
+                                                ),
                                               ),
-                                              style: widget.theme.subtitle2
-                                                  .copyWith(
-                                                color:
-                                                    widget.theme.subtitle2Color,
-                                              ),
-                                            ),
-                                          ),
-                                        Message(
-                                          isSelected:
-                                              _isMessageSelected(message),
-                                          deviceTimeOffset:
-                                              widget.deviceTimeOffset,
-                                          key: ValueKey(message),
-                                          room: widget.room,
-                                          usersUidMap: widget.usersUidMap,
-                                          dateLocale: widget.dateLocale,
-                                          message: message,
-                                          messageWidth: _messageWidth,
-                                          onMessageLongPress: (message) {
-                                            if (widget.isMultiselectOn ==
-                                                true) {
-                                              return;
-                                            }
-                                            if (message.type ==
-                                                    types.MessageType.file ||
-                                                message.type ==
-                                                    types.MessageType.image) {
-                                              _isCopyVisible = false;
-                                            } else {
-                                              _isCopyVisible = true;
-                                            }
-                                            if (message.type !=
-                                                types.MessageType.deleted) {
-                                              widget.onMessageLongPress
-                                                  ?.call(message);
-                                              widget.isMultiselectOn = true;
-                                              _selectedMessages.add(message);
-                                              widget.selectedMessages
-                                                  ?.call(_selectedMessages);
-                                            }
-                                            setState(() {});
-                                          },
-                                          onMessageTap: (tappedMessage) {
-                                            if (widget.isMultiselectOn) {
-                                              if (tappedMessage.type !=
-                                                  types.MessageType.deleted) {
-                                                _selectedMessages
-                                                        .contains(tappedMessage)
-                                                    ? _selectedMessages
-                                                        .remove(tappedMessage)
-                                                    : _selectedMessages
-                                                        .add(tappedMessage);
-                                                if (_selectedMessages.isEmpty) {
-                                                  widget.isMultiselectOn =
-                                                      false;
+                                            Message(
+                                              isSelected:
+                                                  _isMessageSelected(message),
+                                              deviceTimeOffset:
+                                                  widget.deviceTimeOffset,
+                                              key: ValueKey(message),
+                                              room: widget.room,
+                                              usersUidMap: widget.usersUidMap,
+                                              dateLocale: widget.dateLocale,
+                                              message: message,
+                                              messageWidth: _messageWidth,
+                                              onMessageLongPress: (message) {
+                                                if (widget.isMultiselectOn ==
+                                                    true) {
+                                                  return;
                                                 }
-                                                widget.selectedMessages
-                                                    ?.call(_selectedMessages);
-                                                var flag =
-                                                    copyButtonVisiblityChecker();
-                                                if (flag >= 1) {
+                                                if (message.type ==
+                                                        types
+                                                            .MessageType.file ||
+                                                    message.type ==
+                                                        types.MessageType
+                                                            .image) {
                                                   _isCopyVisible = false;
                                                 } else {
                                                   _isCopyVisible = true;
                                                 }
-                                              }
-                                              setState(() {});
-                                            } else {
-                                              if (tappedMessage
-                                                      is types.ImageMessage &&
-                                                  widget.disableImageGallery !=
-                                                      true) {
-                                                _onImagePressed(
-                                                  tappedMessage.uri,
-                                                  galleryItems,
-                                                );
-                                              }
-                                              widget.onMessageTap
-                                                  ?.call(tappedMessage);
-                                            }
-                                          },
-                                          onPreviewDataFetched:
-                                              _onPreviewDataFetched,
-                                          previousMessageSameAuthor:
-                                              previousMessageSameAuthor,
-                                          shouldRenderTime: shouldRenderTime,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              ),
+                                                if (message.type !=
+                                                    types.MessageType.deleted) {
+                                                  widget.onMessageLongPress
+                                                      ?.call(message);
+                                                  widget.isMultiselectOn = true;
+                                                  _selectedMessages
+                                                      .add(message);
+                                                  widget.selectedMessages
+                                                      ?.call(_selectedMessages);
+                                                }
+                                                setState(() {});
+                                              },
+                                              onMessageTap: (tappedMessage) {
+                                                if (widget.isMultiselectOn) {
+                                                  if (tappedMessage.type !=
+                                                      types.MessageType
+                                                          .deleted) {
+                                                    _selectedMessages.contains(
+                                                            tappedMessage)
+                                                        ? _selectedMessages
+                                                            .remove(
+                                                                tappedMessage)
+                                                        : _selectedMessages
+                                                            .add(tappedMessage);
+                                                    if (_selectedMessages
+                                                        .isEmpty) {
+                                                      widget.isMultiselectOn =
+                                                          false;
+                                                    }
+                                                    widget.selectedMessages
+                                                        ?.call(
+                                                            _selectedMessages);
+                                                    var flag =
+                                                        copyButtonVisiblityChecker();
+                                                    if (flag >= 1) {
+                                                      _isCopyVisible = false;
+                                                    } else {
+                                                      _isCopyVisible = true;
+                                                    }
+                                                  }
+                                                  setState(() {});
+                                                } else {
+                                                  if (tappedMessage is types
+                                                          .ImageMessage &&
+                                                      widget.disableImageGallery !=
+                                                          true) {
+                                                    _onImagePressed(
+                                                      tappedMessage.uri,
+                                                      galleryItems,
+                                                    );
+                                                  }
+                                                  widget.onMessageTap
+                                                      ?.call(tappedMessage);
+                                                }
+                                              },
+                                              onPreviewDataFetched:
+                                                  _onPreviewDataFetched,
+                                              previousMessageSameAuthor:
+                                                  previousMessageSameAuthor,
+                                              shouldRenderTime:
+                                                  shouldRenderTime,
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ),
+                          ),
+                          Input(
+                            isAttachmentUploading: widget.isAttachmentUploading,
+                            onAttachmentPressed: () {
+                              clearSelectedMessages();
+                              widget.onAttachmentPressed?.call();
+                            },
+                            onSendPressed: (text) {
+                              clearSelectedMessages();
+                              widget.onSendPressed(text);
+                            },
+                          ),
+                        ],
                       ),
-                      Input(
-                        isAttachmentUploading: widget.isAttachmentUploading,
-                        onAttachmentPressed: () {
-                          clearSelectedMessages();
-                          widget.onAttachmentPressed?.call();
-                        },
-                        onSendPressed: (text) {
-                          clearSelectedMessages();
-                          widget.onSendPressed(text);
-                        },
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -504,7 +523,7 @@ class _ChatState extends State<Chat> {
     return Visibility(
       visible: widget.isMultiselectOn,
       child: Container(
-        color: const Color(0xFF2B2A29),
+        color: const Color(0xff1d1d21).withOpacity(0.8),
         child: ButtonBar(
           alignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -537,7 +556,7 @@ class _ChatState extends State<Chat> {
                   //     color: Colors.black,
                   //   ),
                   // ),
-                   Tooltip(
+                  Tooltip(
                     message: 'Edit',
                     child: GestureDetector(
                       onTap: () {

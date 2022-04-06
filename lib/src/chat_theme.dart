@@ -106,6 +106,7 @@ class DefaultChatTheme extends ChatTheme {
   const DefaultChatTheme({
     String? attachmentButtonIcon,
     Color backgroundColor = const Color(0xffffffff),
+    //Color backgroundColor = Colors.black,
     TextStyle body1 = const TextStyle(
       fontFamily: 'Avenir',
       fontSize: 16,

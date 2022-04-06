@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
+import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 import '../chat_l10n.dart';
@@ -161,10 +162,15 @@ class _ChatState extends State<Chat> {
     for (var i = 0; i < _selectedMessages.length; i++) {
       final textMessage = _selectedMessages[i] as types.TextMessage;
       final key = textMessage.authorId;
+      final date =
+          DateTime.fromMillisecondsSinceEpoch(textMessage.timestamp! * 1000);
+      final finalDate = DateFormat('dd/MM, hh:mm a').format(date);
+      print('TIMESTAMP: ${finalDate}');
       var name = widget.usersUidMap![key];
       name ??= widget.selfUidMap![key];
       print('KEY: $key + NAME: $name');
-      copiedMessages = copiedMessages + '[$name] ${textMessage.text}\n';
+      copiedMessages =
+          copiedMessages + '[$finalDate] $name: ${textMessage.text}\n';
     }
     print(copiedMessages);
     final data = ClipboardData(text: copiedMessages);
@@ -261,7 +267,8 @@ class _ChatState extends State<Chat> {
     _isdeleteVisible = widget.isDeleteButtonVisible ?? true;
 
     _isEditVisible = widget.isEditButtonVisible ?? true;
-
+    print(widget.theme.backgroundColor);
+    print(widget.theme);
     return InheritedUser(
       user: widget.user,
       child: InheritedChatTheme(
@@ -494,54 +501,68 @@ class _ChatState extends State<Chat> {
   Visibility multiSelectionOptionsBar() {
     return Visibility(
       visible: widget.isMultiselectOn,
-      child: ButtonBar(
-        alignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-              tooltip: 'Cancel',
-              onPressed: () {
-                clearSelectedMessages();
-                setState(() {});
-              },
-              icon: const Icon(Icons.close)),
-          Row(
-            children: [
-              if (_isCopyVisible)
-                IconButton(
-                    tooltip: 'Copy',
-                    onPressed: () {
-                      copySelectedMessage();
-                      clearSelectedMessages();
-                      showCopiedSnackbar();
-                      setState(() {});
-                    },
-                    icon: const Icon(Icons.copy)),
-              if (_isEditVisible)
-                IconButton(
-                    tooltip: 'Edit',
-                    onPressed: () {
-                      _editMessage(
-                          _selectedMessages.first as types.TextMessage);
-                      clearSelectedMessages();
-                      setState(() {});
-                    },
-                    icon: const Icon(
-                      CupertinoIcons.pen,
-                    )),
-              if (_isdeleteVisible)
-                IconButton(
-                    tooltip: 'Delete',
-                    onPressed: () {
-                      widget.onDeleteMessages?.call(_selectedMessages);
-                      clearSelectedMessages();
-                      setState(() {});
-                    },
-                    icon: const Icon(
-                      Icons.delete,
-                    )),
-            ],
-          ),
-        ],
+      child: Container(
+        color: const Color(0xFF2B2A29),
+        child: ButtonBar(
+          alignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+                color: Colors.white,
+                tooltip: 'Cancel',
+                onPressed: () {
+                  clearSelectedMessages();
+                  setState(() {});
+                },
+                icon: const Icon(Icons.close)),
+            Row(
+              children: [
+                if (_isCopyVisible)
+                  IconButton(
+                      color: Colors.white,
+                      tooltip: 'Copy',
+                      onPressed: () {
+                        copySelectedMessage();
+                        clearSelectedMessages();
+                        showCopiedSnackbar();
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.copy)),
+                if (_isEditVisible)
+                  // ExcludeSemantics(
+                  //   child: SvgPicture.asset(
+                  //     image,
+                  //     //height: device.height * 0.35,
+                  //     color: Colors.black,
+                  //   ),
+                  // ),
+                  IconButton(
+                      color: Colors.white,
+                      tooltip: 'Edit',
+                      onPressed: () {
+                        _editMessage(
+                            _selectedMessages.first as types.TextMessage);
+                        clearSelectedMessages();
+                        setState(() {});
+                      },
+                      icon: const Icon(
+                        CupertinoIcons.pen,
+                      )),
+                if (_isdeleteVisible)
+                  IconButton(
+                      color: Colors.white,
+                      tooltip: 'Delete',
+                      onPressed: () {
+                        widget.onDeleteMessages?.call(_selectedMessages);
+                        clearSelectedMessages();
+                        setState(() {});
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                      )),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

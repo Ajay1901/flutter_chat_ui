@@ -22,6 +22,7 @@ dependencies:
       url: https://github.com/Ajay1901/flutter_link_previewer.git
   intl: ^0.17.0
   photo_view: ^0.11.0
+  flutter_svg: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -45,3 +46,4 @@ flutter:
     - packages/flutter_chat_ui/assets/3.0x/icon-document.png
     - packages/flutter_chat_ui/assets/3.0x/icon-read.png
     - packages/flutter_chat_ui/assets/3.0x/icon-send.png
+    - packages/flutter_chat_ui/assets/listed_by_todo_icon.svg

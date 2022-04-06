@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
@@ -536,18 +537,26 @@ class _ChatState extends State<Chat> {
                   //     color: Colors.black,
                   //   ),
                   // ),
-                  IconButton(
-                      color: Colors.white,
-                      tooltip: 'Edit',
-                      onPressed: () {
+                   Tooltip(
+                    message: 'Edit',
+                    child: GestureDetector(
+                      onTap: () {
                         _editMessage(
                             _selectedMessages.first as types.TextMessage);
                         clearSelectedMessages();
                         setState(() {});
                       },
-                      icon: const Icon(
-                        CupertinoIcons.pen,
-                      )),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        child: SvgPicture.asset(
+                          'packages/flutter_chat_ui/assets/listed_by_todo_icon.svg',
+                          width: 25.0,
+                          height: 25.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
                 if (_isdeleteVisible)
                   IconButton(
                       color: Colors.white,

@@ -158,6 +158,10 @@ class _ChatState extends State<Chat> {
   }
 
   Future<void> copySelectedMessage() async {
+    _selectedMessages.sort((a, b) {
+      return DateTime.parse(a.timestamp.toString())
+          .compareTo(DateTime.parse(b.timestamp.toString()));
+    });
     var copiedMessages = '';
     for (var i = 0; i < _selectedMessages.length; i++) {
       final textMessage = _selectedMessages[i] as types.TextMessage;
@@ -165,14 +169,11 @@ class _ChatState extends State<Chat> {
       final date =
           DateTime.fromMillisecondsSinceEpoch(textMessage.timestamp! * 1000);
       final finalDate = DateFormat('dd/MM, hh:mm a').format(date);
-      print('TIMESTAMP: ${finalDate}');
       var name = widget.usersUidMap![key];
       name ??= widget.selfUidMap![key];
-      print('KEY: $key + NAME: $name');
       copiedMessages =
           copiedMessages + '[$finalDate] $name: ${textMessage.text}\n';
     }
-    print(copiedMessages);
     final data = ClipboardData(text: copiedMessages);
     await Clipboard.setData(data);
   }

@@ -201,7 +201,8 @@ class Message extends StatelessWidget {
   }
 
   Widget _buildStatus(BuildContext context) {
-    if (message.type == types.MessageType.groupExit) {
+    if (message.type == types.MessageType.groupExit ||
+        message.type == types.MessageType.deleted) {
       return Container();
     }
 

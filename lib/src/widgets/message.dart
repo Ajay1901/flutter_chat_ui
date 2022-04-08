@@ -179,16 +179,6 @@ class Message extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (name != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 8, 2),
-                child: Text(
-                  name,
-                  style: TextStyle(color: color, fontWeight: fontWeight),
-                ),
-              )
-            else
-              const SizedBox(),
             GroupExitMessageWidget(
               message: groupExitMessage,
               fullName: name ?? 'User',

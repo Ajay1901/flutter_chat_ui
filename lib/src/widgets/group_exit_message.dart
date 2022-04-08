@@ -4,9 +4,9 @@ import 'inherited_chat_theme.dart';
 import 'inherited_user.dart';
 
 /// A class that represents text message widget with optional link preview
-class GroupExitMessage extends StatelessWidget {
+class GroupExitMessageWidget extends StatelessWidget {
   /// Creates a text message widget from a [types.TextMessage] class
-  const GroupExitMessage(
+  const GroupExitMessageWidget(
       {Key? key, required this.message, required this.fullName})
       : super(key: key);
 
@@ -18,10 +18,7 @@ class GroupExitMessage extends StatelessWidget {
     return Text(
       '$fullName exited the group',
       style: InheritedChatTheme.of(context).theme.body1.copyWith(
-            color: user.id == message.authorId
-                ? InheritedChatTheme.of(context).theme.primaryTextColor
-                : InheritedChatTheme.of(context).theme.secondaryTextColor,
-          ),
+          color: InheritedChatTheme.of(context).theme.secondaryTextColor),
       textWidthBasis: TextWidthBasis.longestLine,
     );
   }
@@ -31,12 +28,19 @@ class GroupExitMessage extends StatelessWidget {
     final _user = InheritedUser.of(context).user;
     final _width = MediaQuery.of(context).size.width;
 
+    final margin = message.type == types.MessageType.groupExit
+        ? const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 8,
+          )
+        : const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 16,
+          );
+
     return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 16,
-      ),
-      child: _textWidget(_user, context),
+      margin: margin,
+      child: Center(child: _textWidget(_user, context)),
     );
   }
 }

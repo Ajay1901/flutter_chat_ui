@@ -68,7 +68,7 @@ class Message extends StatelessWidget {
 
   bool isSelected;
 
-  Widget _buildMessage() {
+  Widget _buildMessage(BuildContext context) {
     const Color deletedUserColor = Color(0xFF8F99A1);
     final isGroupChat = room?.type == types.RoomType.group;
     String? name;
@@ -189,7 +189,7 @@ class Message extends StatelessWidget {
               )
             else
               const SizedBox(),
-            GroupExitMessage(
+            GroupExitMessageWidget(
               message: groupExitMessage,
               fullName: name ?? 'User',
             ),
@@ -201,6 +201,10 @@ class Message extends StatelessWidget {
   }
 
   Widget _buildStatus(BuildContext context) {
+    if (message.type == types.MessageType.groupExit) {
+      return Container();
+    }
+
     switch (message.status) {
       case types.Status.delivered:
         return InheritedChatTheme.of(context).theme.deliveredIcon != null
@@ -287,9 +291,11 @@ class Message extends StatelessWidget {
     final _currentUserIsAuthor = _user.id == message.authorId;
 
     return Row(
-      mainAxisAlignment: _currentUserIsAuthor
-          ? MainAxisAlignment.spaceBetween
-          : MainAxisAlignment.start,
+      mainAxisAlignment: message.type == types.MessageType.groupExit
+          ? MainAxisAlignment.center
+          : _currentUserIsAuthor
+              ? MainAxisAlignment.spaceBetween
+              : MainAxisAlignment.start,
       children: [
         // ignore: prefer_if_elements_to_conditional_expressions
         isSelected ? const SelectedTickMarkIcon() : const SizedBox(),
@@ -316,9 +322,13 @@ class Message extends StatelessWidget {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          borderRadius: _borderRadius,
+                          borderRadius:
+                              message.type == types.MessageType.groupExit
+                                  ? BorderRadius.circular(18)
+                                  : _borderRadius,
                           color: !_currentUserIsAuthor ||
-                                  message.type == types.MessageType.image
+                                  message.type == types.MessageType.image ||
+                                  message.type == types.MessageType.groupExit
                               ? InheritedChatTheme.of(context)
                                   .theme
                                   .secondaryColor
@@ -328,7 +338,7 @@ class Message extends StatelessWidget {
                         ),
                         child: ClipRRect(
                           borderRadius: _borderRadius,
-                          child: _buildMessage(),
+                          child: _buildMessage(context),
                         ),
                       ),
                     ],

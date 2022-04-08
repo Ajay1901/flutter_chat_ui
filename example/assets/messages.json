@@ -1,5 +1,12 @@
 [
   {
+    "authorId": "06c33e8b-e835-4736-80f4-63f44b66666c",
+    "id": "db334c22-1fc4-4951-86b2-1eb7f7262743342",
+    "status": "read",
+    "timestamp": 1598438791,
+    "type": "groupExit"
+  },
+  {
     "authorId": "b4878b96-efbc-479a-8291-474ef323dec7",
     "id": "e7a673e9-86eb-4572-936f-2882b0183cdc",
     "status": "read",

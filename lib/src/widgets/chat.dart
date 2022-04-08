@@ -426,6 +426,14 @@ class _ChatState extends State<Chat> {
                                                 } else {
                                                   _isCopyVisible = true;
                                                 }
+
+                                                if (message.type ==
+                                                    types.MessageType
+                                                        .groupExit) {
+                                                  setState(() {});
+                                                  return;
+                                                }
+
                                                 if (message.type !=
                                                     types.MessageType.deleted) {
                                                   widget.onMessageLongPress

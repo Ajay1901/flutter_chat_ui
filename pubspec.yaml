@@ -47,3 +47,4 @@ flutter:
     - packages/flutter_chat_ui/assets/3.0x/icon-read.png
     - packages/flutter_chat_ui/assets/3.0x/icon-send.png
     - packages/flutter_chat_ui/assets/listed_by_todo_icon.svg
+    - packages/flutter_chat_ui/assets/dialog_image.svg

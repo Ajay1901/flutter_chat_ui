@@ -214,8 +214,12 @@ class _ChatPageState extends State<ChatPage> {
           //   "b4878b96-efbc-479a-8291-474ef323dec7": "Other",
           // },
           // selfUidMap: {"06c33e8b-e835-4736-80f4-63f44b66666c": "IAM"},
+          isDeleteButtonVisible: true,
           isEditButtonVisible: true,
           isMultiselectOn: isMultiSelecteon,
+          onDeleteMessages: (message) {
+           
+          },
           onEditMessage: (message, text) {}),
     );
   }

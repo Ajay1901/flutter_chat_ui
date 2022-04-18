@@ -151,6 +151,7 @@ class _ChatState extends State<Chat> {
     String uri,
     List<String> galleryItems,
   ) {
+    FocusScope.of(context).requestFocus(FocusNode());
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.bottom]);
     setState(() {

@@ -29,12 +29,12 @@ class _RejectAcceptDialogState extends State<RejectAcceptDialog> {
       child: Semantics(
         child: Dialog(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
           backgroundColor: const Color(0xFFFFFFFF),
           child: IntrinsicHeight(
             child: Container(
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all( Radius.circular(30.0)),
+                borderRadius: BorderRadius.all( Radius.circular(20.0)),
               ),
               child: Stack(
                 children: [
@@ -42,9 +42,12 @@ class _RejectAcceptDialogState extends State<RejectAcceptDialog> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      SvgPicture.asset(
-                        'packages/flutter_chat_ui/assets/dialog_image.svg',
-                        fit: BoxFit.contain,
+                      Padding(
+                        padding: const EdgeInsets.all(0.8),
+                        child: SvgPicture.asset(
+                          'packages/flutter_chat_ui/assets/dialog_image.svg',
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ],
                   ),
@@ -75,13 +78,13 @@ class _RejectAcceptDialogState extends State<RejectAcceptDialog> {
                                   ),
                                 if (widget.title != null)
                                   SizedBox(
-                                    height: devHeight * 0.03,
+                                    height: devHeight * 0.023,
                                   ),
                                 Text(
                                   widget.body,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w500,
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       color: Color.fromRGBO(75, 93, 107, 0.81)),
                                 ),
                               ],
@@ -114,7 +117,7 @@ class _RejectAcceptDialogState extends State<RejectAcceptDialog> {
                                       'CANCEL',
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           color: Color(0xFF4B5D6B)),
                                     ),
                                   ),
@@ -123,7 +126,7 @@ class _RejectAcceptDialogState extends State<RejectAcceptDialog> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                right: 16,
+                                right: 14,
                               ),
                               child: GestureDetector(
                                 onTap: () {
@@ -142,7 +145,7 @@ class _RejectAcceptDialogState extends State<RejectAcceptDialog> {
                                       'YES',
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           color: Colors.white),
                                     ),
                                   ),

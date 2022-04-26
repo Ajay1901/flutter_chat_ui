@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_chat_ui/src/widgets/accept_reject_dialog.dart';
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -150,6 +151,7 @@ class _ChatState extends State<Chat> {
     String uri,
     List<String> galleryItems,
   ) {
+    FocusScope.of(context).requestFocus(FocusNode());
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.bottom]);
     setState(() {
@@ -589,9 +591,21 @@ class _ChatState extends State<Chat> {
                       color: Colors.white,
                       tooltip: 'Delete',
                       onPressed: () {
-                        widget.onDeleteMessages?.call(_selectedMessages);
-                        clearSelectedMessages();
-                        setState(() {});
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return RejectAcceptDialog(
+                                  title: 'Delete Messages',
+                                  body:
+                                      'Are you sure you want to delete the selected messages?',
+                                  okAction: () {
+                                    deleteSelectedMessages();
+                                    Navigator.of(context).pop();
+                                  },
+                                  cancel: () {
+                                    Navigator.of(context).pop();
+                                  });
+                            });
                       },
                       icon: const Icon(
                         Icons.delete,
@@ -602,6 +616,12 @@ class _ChatState extends State<Chat> {
         ),
       ),
     );
+  }
+
+  void deleteSelectedMessages() {
+    widget.onDeleteMessages?.call(_selectedMessages);
+    clearSelectedMessages();
+    setState(() {});
   }
 
   void showCopiedSnackbar() {

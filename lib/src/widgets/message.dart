@@ -232,7 +232,16 @@ class Message extends StatelessWidget {
           ),
         );
       default:
-        return Container();
+        return InheritedChatTheme.of(context).theme.deliveredIcon != null
+            ? Image.asset(
+                InheritedChatTheme.of(context).theme.deliveredIcon!,
+                color: InheritedChatTheme.of(context).theme.primaryColor,
+              )
+            : Image.asset(
+                'assets/icon-delivered.png',
+                color: InheritedChatTheme.of(context).theme.primaryColor,
+                package: 'flutter_chat_ui',
+              );
     }
   }
 

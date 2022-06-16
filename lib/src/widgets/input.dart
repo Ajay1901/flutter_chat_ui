@@ -71,7 +71,7 @@ class _InputState extends State<Input> {
           color: InheritedChatTheme.of(context).theme.inputBackgroundColor,
           strokeWidth: 2,
           valueColor: AlwaysStoppedAnimation<Color>(
-            InheritedChatTheme.of(context).theme.inputTextColor,
+            InheritedChatTheme.of(context).theme.inputBackgroundColor,
           ),
         ),
       );

@@ -85,8 +85,8 @@ class _InputState extends State<Input> {
     final _query = MediaQuery.of(context);
 
     return Material(
-      borderRadius: InheritedChatTheme.of(context).theme.inputBorderRadius,
-      color: InheritedChatTheme.of(context).theme.inputBackgroundColor,
+      // borderRadius: InheritedChatTheme.of(context).theme.inputBorderRadius,
+      color: Colors.transparent,
       child: Container(
         padding: EdgeInsets.fromLTRB(
           24 + _query.padding.left,
@@ -97,29 +97,43 @@ class _InputState extends State<Input> {
         child: Row(
           children: [
             if (widget.onAttachmentPressed != null) _leftWidget(),
+            if (widget.onAttachmentPressed != null) const SizedBox(width: 6),
             Expanded(
-              child: TextField(
-                controller: _textController,
-                decoration: InputDecoration.collapsed(
-                  hintStyle:
-                      InheritedChatTheme.of(context).theme.body1.copyWith(
-                            color: InheritedChatTheme.of(context)
-                                .theme
-                                .inputTextColor
-                                .withOpacity(0.5),
-                          ),
-                  hintText: InheritedL10n.of(context).l10n.inputPlaceholder,
+              child: Container(
+                padding: const EdgeInsets.only(left: 10),
+                height: 40,
+                decoration: BoxDecoration(
+                  color:
+                      InheritedChatTheme.of(context).theme.inputBackgroundColor,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                keyboardType: TextInputType.multiline,
-                maxLines: 5,
-                minLines: 1,
-                style: InheritedChatTheme.of(context).theme.body1.copyWith(
-                      color:
-                          InheritedChatTheme.of(context).theme.inputTextColor,
+                child: Center(
+                  child: TextField(
+                    controller: _textController,
+                    decoration: InputDecoration.collapsed(
+                      hintStyle:
+                          InheritedChatTheme.of(context).theme.body1.copyWith(
+                                color: InheritedChatTheme.of(context)
+                                    .theme
+                                    .inputTextColor
+                                    .withOpacity(0.5),
+                              ),
+                      hintText: InheritedL10n.of(context).l10n.inputPlaceholder,
                     ),
-                textCapitalization: TextCapitalization.sentences,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 5,
+                    minLines: 1,
+                    style: InheritedChatTheme.of(context).theme.body1.copyWith(
+                          color: InheritedChatTheme.of(context)
+                              .theme
+                              .inputTextColor,
+                        ),
+                    textCapitalization: TextCapitalization.sentences,
+                  ),
+                ),
               ),
             ),
+            const SizedBox(width: 6),
             Visibility(
               visible: _sendButtonVisible,
               child: SendButton(

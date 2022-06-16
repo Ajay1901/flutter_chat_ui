@@ -68,7 +68,7 @@ class _InputState extends State<Input> {
         height: 24,
         width: 24,
         child: CircularProgressIndicator(
-          backgroundColor: Colors.transparent,
+          color: InheritedChatTheme.of(context).theme.inputBackgroundColor,
           strokeWidth: 2,
           valueColor: AlwaysStoppedAnimation<Color>(
             InheritedChatTheme.of(context).theme.inputTextColor,
